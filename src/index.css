@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+  
+  --color-brand-teal: #0d9488;
+  --color-brand-teal-dark: #0f766e;
+  --color-brand-teal-light: #2dd4bf;
+  --color-brand-green: #84cc16;
+  --color-brand-green-light: #bef264;
+  --color-brand-navy: #051c2c;
+  --color-brand-navy-dark: #02111d;
+  --color-brand-navy-light: #0d2a3f;
+  
+  --color-gray-border: #e2e8f0;
+
+  --animate-bob: bob 3.5s ease-in-out infinite;
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+}
