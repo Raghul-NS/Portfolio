@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowRight, Download, Compass, Layers, Terminal, Rocket, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -9,6 +10,143 @@ import avatarImg from '../assets/about me avatar.png';
 export default function About() {
   const [activeStep, setActiveStep] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [revealedSteps, setRevealedSteps] = useState<boolean[]>([false, false, false, false, false]);
+  const [revealedServices, setRevealedServices] = useState<boolean[]>([false, false, false, false, false]);
+  const [revealedExp, setRevealedExp] = useState<boolean[]>([false, false, false]);
+
+  // Observe Experience Cards on currentPage change
+  useEffect(() => {
+    setRevealedExp([false, false, false]);
+
+    const observers: IntersectionObserver[] = [];
+    const timer = setTimeout(() => {
+      const cards = document.querySelectorAll('.experience-step-card');
+      cards.forEach((card, idx) => {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setRevealedExp((prev) => {
+                  const next = [...prev];
+                  next[idx] = true;
+                  return next;
+                });
+                observer.disconnect();
+              }
+            });
+          },
+          { threshold: 0.05, rootMargin: '0px 0px -20px 0px' }
+        );
+        observer.observe(card);
+        observers.push(observer);
+      });
+    }, 150);
+
+    return () => {
+      clearTimeout(timer);
+      observers.forEach((obs) => obs.disconnect());
+    };
+  }, [currentPage]);
+
+  // Observe process section scroll reveals individually per card
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    
+    const timer = setTimeout(() => {
+      // Observe Left Mock IDE Card
+      const leftCard = document.querySelector('.process-left-card');
+      if (leftCard) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setRevealedSteps((prev) => {
+                  const next = [...prev];
+                  next[0] = true;
+                  return next;
+                });
+                observer.disconnect();
+              }
+            });
+          },
+          { threshold: 0.05 }
+        );
+        observer.observe(leftCard);
+        observers.push(observer);
+      }
+
+      // Observe Right Step Cards
+      const cards = document.querySelectorAll('.process-step-card');
+      cards.forEach((card, idx) => {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setRevealedSteps((prev) => {
+                  const next = [...prev];
+                  next[idx + 1] = true;
+                  return next;
+                });
+                observer.disconnect();
+              }
+            });
+          },
+          { threshold: 0.05, rootMargin: '0px 0px -30px 0px' }
+        );
+        observer.observe(card);
+        observers.push(observer);
+      });
+
+      // Observe Services Left Details Column
+      const serviceLeft = document.querySelector('.service-left-details');
+      if (serviceLeft) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setRevealedServices((prev) => {
+                  const next = [...prev];
+                  next[0] = true;
+                  return next;
+                });
+                observer.disconnect();
+              }
+            });
+          },
+          { threshold: 0.05 }
+        );
+        observer.observe(serviceLeft);
+        observers.push(observer);
+      }
+
+      // Observe Services Right 2x2 Grid Cards
+      const serviceCards = document.querySelectorAll('.service-step-card');
+      serviceCards.forEach((card, idx) => {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setRevealedServices((prev) => {
+                  const next = [...prev];
+                  next[idx + 1] = true;
+                  return next;
+                });
+                observer.disconnect();
+              }
+            });
+          },
+          { threshold: 0.05, rootMargin: '0px 0px -30px 0px' }
+        );
+        observer.observe(card);
+        observers.push(observer);
+      });
+    }, 950);
+
+    return () => {
+      clearTimeout(timer);
+      observers.forEach((obs) => obs.disconnect());
+    };
+  }, []);
 
   const skills = [
     'React.js',
@@ -111,7 +249,7 @@ export default function About() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
               
               {/* Left Side Details */}
-              <div className="lg:col-span-7 space-y-6 text-left">
+              <div className="lg:col-span-7 space-y-6 text-left reveal">
                 {/* Header Name and Subtitle Container with bottom border line */}
                 <div className="border-b border-neutral-200/80 pb-4">
                   <h1 className="font-sans font-normal text-3xl sm:text-4xl text-neutral-800 tracking-wide uppercase">
@@ -187,7 +325,7 @@ export default function About() {
               </div>
 
               {/* Right Side Visual Block */}
-              <div className="lg:col-span-5 flex flex-col items-center justify-center">
+              <div className="lg:col-span-5 flex flex-col items-center justify-center reveal-right">
                 <div className="relative w-full max-w-[360px] group">
                   
                   {/* Photo Frame Container (Image 2 style match) */}
@@ -211,7 +349,7 @@ export default function About() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             {/* Section Header */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start mb-16">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start mb-16 reveal">
               <div className="lg:col-span-6 text-left">
                 <h2 className="font-sans font-bold text-xs uppercase tracking-widest text-brand-teal">
                   Process
@@ -232,7 +370,7 @@ export default function About() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
               
               {/* Left Side: Mock IDE/Terminal Graphic */}
-              <div className="lg:col-span-5 flex flex-col">
+              <div className={`lg:col-span-5 flex flex-col process-left-card reveal-left delay-75 ${revealedSteps[0] ? 'visible transition-all duration-300' : ''}`}>
                 <div className="bg-brand-navy border border-brand-navy-light rounded-[2rem] p-6 text-left shadow-lg relative overflow-hidden group flex flex-col justify-between h-full">
                   {/* Decorative glowing gradient dots */}
                   <div className="absolute top-[-10%] right-[-10%] w-40 h-40 rounded-full bg-brand-teal/10 blur-2xl pointer-events-none" />
@@ -293,7 +431,10 @@ export default function About() {
                   <div 
                     key={item.step}
                     onMouseEnter={() => setActiveStep(idx)}
-                    className={`bg-white border rounded-2xl p-5 md:p-6 shadow-sm hover:shadow-md transition-all duration-300 flex items-start gap-4 cursor-default group ${
+                    style={{ transitionDelay: `${idx * 80}ms` }}
+                    className={`bg-white border rounded-2xl p-5 md:p-6 shadow-sm hover:shadow-md flex items-start gap-4 cursor-default group process-step-card reveal-right ${
+                      revealedSteps[idx + 1] ? 'visible transition-all duration-300' : ''
+                    } ${
                       activeStep === idx ? 'border-brand-teal/30 ring-1 ring-brand-teal/5' : 'border-gray-border/50'
                     }`}
                   >
@@ -329,7 +470,7 @@ export default function About() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
               
               {/* Left Column details */}
-              <div className="lg:col-span-4 flex flex-col justify-between items-start text-left">
+              <div className={`lg:col-span-4 flex flex-col justify-between items-start text-left service-left-details reveal-left ${revealedServices[0] ? 'visible transition-all duration-300' : ''}`}>
                 <div>
                   <h2 className="font-sans font-bold text-xs uppercase tracking-widest text-brand-teal">
                     Services
@@ -344,12 +485,12 @@ export default function About() {
                 </div>
 
                 <div className="pt-8">
-                  <a
-                    href="#lets-talk"
+                  <Link
+                    to="/lets-talk"
                     className="inline-flex items-center gap-2 font-sans font-bold text-sm bg-brand-navy text-white px-7 py-3.5 rounded-full hover:bg-brand-teal transition-all duration-300 shadow-sm hover:shadow-md active:scale-95"
                   >
                     Contact Me
-                  </a>
+                  </Link>
                 </div>
               </div>
 
@@ -357,7 +498,11 @@ export default function About() {
               <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
                 
                 {/* Card 1: Frontend Development (Jet-Black Theme Match with Glossy Spheres) */}
-                <div className="bg-black rounded-[2rem] p-6 text-white border border-white/5 hover:border-brand-teal/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 relative overflow-hidden group text-left flex flex-col justify-between min-h-[220px]">
+                <Link 
+                  to="/tech-stack#tech-section"
+                  style={{ transitionDelay: '0ms' }}
+                  className={`bg-black rounded-[2rem] p-6 text-white border border-white/5 hover:border-brand-teal/30 hover:-translate-y-1 hover:shadow-lg relative overflow-hidden group text-left flex flex-col justify-between min-h-[220px] service-step-card reveal-scale ${revealedServices[1] ? 'visible transition-all duration-300' : ''}`}
+                >
                                  {/* High-Tech Ambient Glassmorphic Grid Background */}
                   {/* Teal & Green Glowing Ambient Orbs */}
                   <div className="absolute top-[-20%] right-[-10%] w-60 h-60 rounded-full bg-brand-teal/20 blur-[50px] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
@@ -404,10 +549,14 @@ export default function About() {
                   <div className="relative z-10 flex justify-between items-center mt-6">
                     <span className="text-[10px] text-brand-teal font-sans uppercase font-bold tracking-wider">Next.js / Vite</span>
                   </div>
-                </div>
+                </Link>
 
                 {/* Card 2: Backend Development */}
-                <div className="bg-gray-50 rounded-[2rem] p-6 border border-gray-100 hover:border-brand-green/30 hover:bg-white hover:-translate-y-1 hover:shadow-lg transition-all duration-300 text-left flex flex-col justify-between min-h-[220px] group">
+                <Link 
+                  to="/tech-stack#tech-section"
+                  style={{ transitionDelay: '80ms' }}
+                  className={`bg-gray-50 rounded-[2rem] p-6 border border-gray-100 hover:border-brand-green/30 hover:bg-white hover:-translate-y-1 hover:shadow-lg text-left flex flex-col justify-between min-h-[220px] group service-step-card reveal-scale ${revealedServices[2] ? 'visible transition-all duration-300' : ''}`}
+                >
                   <div>
                     <span className="font-mono text-[9px] font-bold text-brand-teal uppercase tracking-widest">Node.js & Supabase</span>
                     <h3 className="font-sans font-black text-xl mt-1.5 text-brand-navy">Backend & Database</h3>
@@ -422,10 +571,14 @@ export default function About() {
                       <ArrowRight className="w-4 h-4 text-brand-navy group-hover:text-white" />
                     </div>
                   </div>
-                </div>
+                </Link>
 
                 {/* Card 3: Desktop App Packaging */}
-                <div className="bg-gray-50 rounded-[2rem] p-6 border border-gray-100 hover:border-brand-teal/30 hover:bg-white hover:-translate-y-1 hover:shadow-lg transition-all duration-300 text-left flex flex-col justify-between min-h-[220px] group">
+                <Link 
+                  to="/tech-stack#tech-section"
+                  style={{ transitionDelay: '160ms' }}
+                  className={`bg-gray-50 rounded-[2rem] p-6 border border-gray-100 hover:border-brand-teal/30 hover:bg-white hover:-translate-y-1 hover:shadow-lg text-left flex flex-col justify-between min-h-[220px] group service-step-card reveal-scale ${revealedServices[3] ? 'visible transition-all duration-300' : ''}`}
+                >
                   <div>
                     <span className="font-mono text-[9px] font-bold text-brand-teal uppercase tracking-widest">Electron.js Wrapper</span>
                     <h3 className="font-sans font-black text-xl mt-1.5 text-brand-navy">Desktop App Packaging</h3>
@@ -440,10 +593,14 @@ export default function About() {
                       <ArrowRight className="w-4 h-4 text-brand-navy group-hover:text-white" />
                     </div>
                   </div>
-                </div>
+                </Link>
 
                 {/* Card 4: IoT & Automation Interfaces */}
-                <div className="bg-gray-50 rounded-[2rem] p-6 border border-gray-100 hover:border-brand-green/30 hover:bg-white hover:-translate-y-1 hover:shadow-lg transition-all duration-300 text-left flex flex-col justify-between min-h-[220px] group">
+                <Link 
+                  to="/tech-stack#tech-section"
+                  style={{ transitionDelay: '240ms' }}
+                  className={`bg-gray-50 rounded-[2rem] p-6 border border-gray-100 hover:border-brand-green/30 hover:bg-white hover:-translate-y-1 hover:shadow-lg text-left flex flex-col justify-between min-h-[220px] group service-step-card reveal-scale ${revealedServices[4] ? 'visible transition-all duration-300' : ''}`}
+                >
                   <div>
                     <span className="font-mono text-[9px] font-bold text-brand-teal uppercase tracking-widest">Automation & Hardware</span>
                     <h3 className="font-sans font-black text-xl mt-1.5 text-brand-navy">IoT & Control Panels</h3>
@@ -458,7 +615,7 @@ export default function About() {
                       <ArrowRight className="w-4 h-4 text-brand-navy group-hover:text-white" />
                     </div>
                   </div>
-                </div>
+                </Link>
 
               </div>
 
@@ -472,7 +629,7 @@ export default function About() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             {/* Section Header */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start mb-16">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start mb-16 reveal">
               <div className="lg:col-span-6 text-left">
                 <h2 className="font-sans font-bold text-xs uppercase tracking-widest text-brand-teal">
                   Experience
@@ -489,15 +646,21 @@ export default function About() {
               </div>
             </div>
 
-            {/* Experience Cards List */}
-            <div className="space-y-4 max-w-5xl mx-auto">
+            {/* Experience Cards List with key to reset animations on page change */}
+            <div key={currentPage} id="experience-grid" className="space-y-4 max-w-5xl mx-auto">
               {experiences.slice((currentPage - 1) * 3, currentPage * 3).map((exp, idx) => {
                 const realIndex = (currentPage - 1) * 3 + idx;
                 const isActive = idx === 0;
+                const isLeft = idx % 2 === 0;
                 return (
                   <div 
                     key={realIndex}
-                    className={`border rounded-[2rem] p-5 md:p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md text-left flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6 group ${
+                    style={{ transitionDelay: `${idx * 80}ms` }}
+                    className={`border rounded-[2rem] p-5 md:p-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6 group experience-step-card ${
+                      isLeft ? 'reveal-left' : 'reveal-right'
+                    } ${
+                      revealedExp[idx] ? 'visible transition-all duration-300' : ''
+                    } ${
                       isActive
                         ? 'bg-gradient-to-r from-brand-teal/[0.08] to-brand-green/[0.03] border-brand-teal/20 shadow-sm'
                         : 'bg-white border-gray-200/80 shadow-sm hover:border-gray-300/80'
@@ -566,7 +729,7 @@ export default function About() {
 
         {/* Section 5: Let's Talk Section (Jet-Black style matching homepage) */}
         <section id="lets-talk" className="pt-8 pb-16 md:pt-12 md:pb-20 bg-white select-none">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
             
             {/* Jet-Black Card */}
             <div className="relative bg-black rounded-[36px] p-8 py-16 md:py-20 md:px-12 text-center overflow-hidden shadow-xl border border-white/5 group">
@@ -590,12 +753,12 @@ export default function About() {
 
               {/* Centered Pill Button */}
               <div className="relative z-10 flex justify-center">
-                <a
-                  href="#contact"
+                <Link
+                  to="/lets-talk"
                   className="inline-flex items-center font-sans font-bold text-sm bg-neutral-200 text-neutral-900 px-10 py-4 rounded-2xl hover:bg-gradient-to-r hover:from-brand-teal hover:to-brand-green hover:text-white hover:scale-105 active:scale-95 transition-all duration-300 shadow-md select-none"
                 >
                   Let's Talk
-                </a>
+                </Link>
               </div>
 
             </div>

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Layout, 
@@ -11,6 +12,59 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 export default function TechStack() {
+  const [revealedTech, setRevealedTech] = useState<boolean[]>([]);
+
+  // Smooth scroll to hash anchor on mount
+  useEffect(() => {
+    if (window.location.hash) {
+      const id = window.location.hash.substring(1);
+      const el = document.getElementById(id);
+      if (el) {
+        // Wait briefly for route transitions to settle
+        const timer = setTimeout(() => {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }, 400);
+        return () => clearTimeout(timer);
+      }
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, []);
+
+  // Observe category cards scroll reveal
+  useEffect(() => {
+    setRevealedTech(new Array(categories.length).fill(false));
+
+    const observers: IntersectionObserver[] = [];
+    const timer = setTimeout(() => {
+      const cards = document.querySelectorAll('.tech-card-item');
+      cards.forEach((card, idx) => {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setRevealedTech((prev) => {
+                  const next = [...prev];
+                  next[idx] = true;
+                  return next;
+                });
+                observer.disconnect();
+              }
+            });
+          },
+          { threshold: 0.05, rootMargin: '0px 0px -35px 0px' }
+        );
+        observer.observe(card);
+        observers.push(observer);
+      });
+    }, 950);
+
+    return () => {
+      clearTimeout(timer);
+      observers.forEach((obs) => obs.disconnect());
+    };
+  }, []);
+
   const categories = [
     {
       id: '01',
@@ -70,7 +124,7 @@ export default function TechStack() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
               
               {/* Left Column: Copy & Actions */}
-              <div className="lg:col-span-6 text-left space-y-6">
+              <div className="lg:col-span-6 text-left space-y-6 reveal-left">
                 <span className="inline-block font-sans font-bold text-xs uppercase tracking-[0.2em] text-brand-teal">
                   My Toolbelt
                 </span>
@@ -99,7 +153,7 @@ export default function TechStack() {
               </div>
 
               {/* Right Column: Code Editor & Terminal collage */}
-              <div className="lg:col-span-6 flex items-center justify-center relative min-h-[360px] md:min-h-[400px]">
+              <div className="lg:col-span-6 flex items-center justify-center relative min-h-[360px] md:min-h-[400px] reveal-right">
                 
                 {/* Underneath: Code Editor Mockup tilted -rotate-2 */}
                 <div className="absolute w-full max-w-[420px] bg-[#0b0f19] rounded-2xl shadow-2xl border border-slate-800/80 overflow-hidden flex flex-col -rotate-2 -translate-x-6 z-10 transition-transform duration-500 hover:rotate-0 hover:scale-[1.02] select-none">
@@ -186,7 +240,7 @@ export default function TechStack() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-16 select-none">
               
               {/* Left-Aligned Header Block (takes 7 columns) */}
-              <div className="lg:col-span-7 text-left space-y-4">
+              <div className="lg:col-span-7 text-left space-y-4 reveal-left">
                 <span className="inline-block font-sans font-bold text-xs uppercase tracking-[0.2em] text-brand-teal">
                   My Philosophy
                 </span>
@@ -199,7 +253,7 @@ export default function TechStack() {
               </div>
 
               {/* Right-Aligned Stats Card (takes 5 columns, fills the empty space beautifully) */}
-              <div className="lg:col-span-5 relative bg-neutral-50/70 border border-neutral-200/50 rounded-3xl p-6 md:p-8 overflow-hidden shadow-sm flex flex-col justify-between text-left group hover:shadow-md transition-all duration-300">
+              <div className="lg:col-span-5 relative bg-neutral-50/70 border border-neutral-200/50 rounded-3xl p-6 md:p-8 overflow-hidden shadow-sm flex flex-col justify-between text-left group hover:shadow-md transition-all duration-300 reveal-right delay-75">
                 {/* Decorative faint glow */}
                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-brand-teal/5 rounded-full blur-2xl" />
                 
@@ -227,13 +281,16 @@ export default function TechStack() {
             </div>
 
             {/* Flat Grid Container */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16">
+            <div id="tech-section" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16 reveal delay-75 scroll-mt-[220px]">
               {categories.map((cat, idx) => {
                 const IconComponent = cat.icon;
                 return (
                   <div
                     key={idx}
-                    className="flex flex-col text-left space-y-4 group"
+                    style={{ transitionDelay: `${(idx % 3) * 80}ms` }}
+                    className={`flex flex-col text-left space-y-4 group tech-card-item reveal-scale ${
+                      revealedTech[idx] ? 'visible' : ''
+                    }`}
                   >
                     {/* Circle Icon - matching reference image 2 style with premium hover and border */}
                     <div className="w-12 h-12 rounded-full bg-brand-teal/[0.06] border border-brand-teal/10 flex items-center justify-center text-brand-teal group-hover:bg-brand-teal group-hover:text-white group-hover:border-brand-teal group-hover:scale-105 transition-all duration-300 shadow-sm">
@@ -274,7 +331,7 @@ export default function TechStack() {
 
         {/* Let's Talk Section */}
         <section id="lets-talk" className="pt-2 pb-16 md:pt-4 md:pb-20 bg-white select-none">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
             
             {/* Jet-Black Card */}
             <div className="relative bg-black rounded-[36px] p-8 py-16 md:py-20 md:px-12 text-center overflow-hidden shadow-xl border border-white/5 group">

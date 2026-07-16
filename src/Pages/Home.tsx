@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowUpRight, ArrowRight, CheckCircle2, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { 
   SiHtml5, 
@@ -11,6 +11,7 @@ import {
   SiGit 
 } from 'react-icons/si';
 
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -29,7 +30,7 @@ function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
           {/* Left Side Details */}
-          <div className="lg:col-span-7 space-y-6 md:space-y-8 text-left">
+          <div className="lg:col-span-7 space-y-6 md:space-y-8 text-left reveal-left">
             {/* Badge */}
             <div className="inline-flex items-center gap-3 pl-3.5 pr-5 py-2 rounded-full bg-brand-teal/[0.06] text-brand-teal font-mono font-semibold text-[12.5px] tracking-[0.14em] uppercase">
               <span className="w-[18px] h-[18px] rounded-full bg-brand-teal/15 flex items-center justify-center flex-shrink-0">
@@ -71,7 +72,7 @@ function HeroSection() {
               {/* Main Cards Row (Photo + Info Card) */}
               <div className="grid grid-cols-12 gap-4 items-stretch mb-4">
                 {/* Developer Avatar Card */}
-                <div className="col-span-6 rounded-[2rem] overflow-hidden shadow-md border border-gray-border/60 bg-white aspect-[4/5] relative group">
+                <div className="col-span-6 rounded-[2rem] overflow-hidden shadow-md border border-gray-border/60 bg-white aspect-[4/5] relative group reveal-scale delay-75">
                   <img
                     src={avatarImg}
                     alt="Raghul N.S"
@@ -81,7 +82,7 @@ function HeroSection() {
                 </div>
 
                 {/* Tech Dashboard Card */}
-                <div className="col-span-6 rounded-[2rem] overflow-hidden border border-gray-border/70 shadow-sm relative aspect-[4/5] group bg-gray-50">
+                <div className="col-span-6 rounded-[2rem] overflow-hidden border border-gray-border/70 shadow-sm relative aspect-[4/5] group bg-gray-50 reveal-scale delay-150">
                   {/* Background Tech Graphic */}
                   <img
                     src={techBadgeBg}
@@ -152,7 +153,7 @@ function HeroSection() {
               {/* Bottom Actions Row (Social 2x2 Grid + Companies Banner) */}
               <div className="grid grid-cols-12 gap-4 items-stretch">
                 {/* 2x2 Social Links Panel - Compressed padding/gaps */}
-                <div className="col-span-5 grid grid-cols-2 gap-3.5 bg-white p-3.5 rounded-[2rem] border border-gray-border/60 shadow-sm items-center justify-items-center">
+                <div className="col-span-5 grid grid-cols-2 gap-3.5 bg-white p-3.5 rounded-[2rem] border border-gray-border/60 shadow-sm items-center justify-items-center reveal-scale delay-200">
                   
                   {/* LinkedIn */}
                   <a
@@ -220,7 +221,7 @@ function HeroSection() {
                 </div>
 
                 {/* Brand Tagline & CTA Panel - Reduced spacing, margins, and sizes */}
-                <div className="col-span-7 bg-gradient-to-r from-brand-teal to-brand-green p-4.5 md:p-5 rounded-[2rem] text-white shadow-sm flex flex-col justify-between border border-white/10 hover:brightness-105 transition-all text-left relative overflow-hidden group">
+                <div className="col-span-7 bg-gradient-to-r from-brand-teal to-brand-green p-4.5 md:p-5 rounded-[2rem] text-white shadow-sm flex flex-col justify-between border border-white/10 hover:brightness-105 transition-all text-left relative overflow-hidden group reveal-scale delay-300">
                   {/* Subtle background decoration (glowing circle) */}
                   <div className="absolute -right-10 -bottom-10 w-24 h-24 rounded-full bg-white/10 blur-xl group-hover:scale-110 transition-transform duration-700 pointer-events-none" />
                   
@@ -318,7 +319,7 @@ function TechStackSection() {
 
   return (
     <section id="tech-stack" className="py-8 md:py-12 bg-gray-50 border-y border-gray-border/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
         
         {/* Section Header */}
         <div className="text-left mb-8">
@@ -352,7 +353,7 @@ function TechStackSection() {
 function WorksSection() {
   return (
     <section id="works" className="pt-12 pb-20 md:pt-16 md:pb-28 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
         
         {/* Section Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10">
@@ -383,7 +384,7 @@ function WorksSection() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Card Left - Azhizen ERP & CRM System */}
-            <div className="bg-gray-50 border border-gray-100 rounded-3xl p-4 md:p-5 flex flex-col justify-between hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(20,184,166,0.12)] hover:border-brand-teal/30 hover:bg-white transition-all duration-300 ease-out group">
+            <div className="bg-gray-50 border border-gray-100 rounded-3xl p-4 md:p-5 flex flex-col justify-between hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(20,184,166,0.12)] hover:border-brand-teal/30 hover:bg-white transition-all duration-300 ease-out group reveal-left delay-75">
               <div>
                 <h3 className="font-sans font-black text-xl text-brand-navy leading-tight">
                   Azhizen ERP & CRM System
@@ -409,7 +410,7 @@ function WorksSection() {
             </div>
 
             {/* Card Right - KRT Tech Solutions Portfolio */}
-            <div className="bg-gray-50 border border-gray-100 rounded-3xl p-4 md:p-5 flex flex-col justify-between hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(34,197,94,0.12)] hover:border-brand-green/30 hover:bg-white transition-all duration-300 ease-out group">
+            <div className="bg-gray-50 border border-gray-100 rounded-3xl p-4 md:p-5 flex flex-col justify-between hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(34,197,94,0.12)] hover:border-brand-green/30 hover:bg-white transition-all duration-300 ease-out group reveal-right delay-75">
               <div>
                 <div className="flex justify-between items-start">
                   <h3 className="font-sans font-black text-xl text-brand-navy leading-tight">
@@ -446,7 +447,7 @@ function WorksSection() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             {/* Card Bottom Left: Developer Resources Card (Git & terminal cheat sheet) */}
-            <div className="lg:col-span-4 bg-gradient-to-br from-brand-navy to-brand-navy-light rounded-3xl p-8 text-white flex flex-col justify-between relative overflow-hidden group min-h-[320px] hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(15,23,42,0.3)] transition-all duration-300 ease-out">
+            <div className="lg:col-span-4 bg-gradient-to-br from-brand-navy to-brand-navy-light rounded-3xl p-8 text-white flex flex-col justify-between relative overflow-hidden group min-h-[320px] hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(15,23,42,0.3)] transition-all duration-300 ease-out reveal-left delay-150">
               
               {/* Background Decorative Code Braces Watermark */}
               <div className="absolute bottom-[-15px] right-4 text-[140px] font-sans font-black opacity-8 select-none pointer-events-none group-hover:scale-105 transition-transform duration-700">
@@ -471,7 +472,7 @@ function WorksSection() {
             </div>
 
             {/* Card Bottom Right: Figma Design System */}
-            <div className="lg:col-span-8 bg-gray-50 border border-gray-100 rounded-3xl p-8 flex flex-col md:flex-row justify-between gap-8 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(168,85,247,0.12)] hover:border-purple-400/30 hover:bg-white transition-all duration-300 ease-out group">
+            <div className="lg:col-span-8 bg-gray-50 border border-gray-100 rounded-3xl p-8 flex flex-col md:flex-row justify-between gap-8 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(168,85,247,0.12)] hover:border-purple-400/30 hover:bg-white transition-all duration-300 ease-out group reveal-right delay-150">
               <div className="flex flex-col justify-between max-w-sm">
                 <div>
                   <div className="w-12 h-12 bg-white rounded-2xl border border-gray-border/60 flex items-center justify-center shadow-sm mb-6">
@@ -535,6 +536,34 @@ function WorksSection() {
 
 function TestimonialsSection() {
   const [currentPage, setCurrentPage] = useState(0);
+
+  // Local observer to trigger reveal-scale animations when reviews page changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        },
+        {
+          threshold: 0.05,
+          rootMargin: '0px 0px -50px 0px'
+        }
+      );
+
+      const elements = document.querySelectorAll('#testimonials-grid .reveal-scale');
+      elements.forEach((el) => observer.observe(el));
+
+      return () => {
+        elements.forEach((el) => observer.unobserve(el));
+      };
+    }, 60);
+
+    return () => clearTimeout(timer);
+  }, [currentPage]);
 
   const pageReviews = [
     {
@@ -683,8 +712,11 @@ function TestimonialsSection() {
 
   const currentReviews = pageReviews[currentPage];
 
-  const TestimonialCard = ({ item, isLast }: { item: any; isLast?: boolean }) => (
-    <div className={`bg-white border border-gray-border/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between ${isLast ? 'flex-grow' : ''}`}>
+  const TestimonialCard = ({ item, isLast, className = '', style = {} }: { item: any; isLast?: boolean; className?: string; style?: React.CSSProperties }) => (
+    <div 
+      style={style}
+      className={`bg-white border border-gray-border/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between ${isLast ? 'flex-grow' : ''} ${className}`}
+    >
       <div>
         {/* Header: Avatar, Info, Social logo */}
         <div className="flex justify-between items-start mb-4">
@@ -746,24 +778,39 @@ function TestimonialsSection() {
           </p>
         </div>
 
-        {/* 3-Column Testimonial Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        {/* 3-Column Testimonial Layout with key to reset animations on page change */}
+        <div id="testimonials-grid" key={currentPage} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
           {/* Left Column */}
           <div className="lg:col-span-4 flex flex-col gap-6 min-h-full">
             {currentReviews.left.map((item, idx) => (
-              <TestimonialCard key={idx} item={item} isLast={idx === currentReviews.left.length - 1} />
+              <TestimonialCard 
+                key={idx} 
+                item={item} 
+                isLast={idx === currentReviews.left.length - 1} 
+                className="reveal-scale"
+                style={{ transitionDelay: `${150 + idx * 150}ms` }}
+              />
             ))}
           </div>
 
           {/* Middle Column - Video review stays */}
           <div className="lg:col-span-4 flex flex-col gap-6 min-h-full">
             {currentReviews.center.map((item, idx) => (
-              <TestimonialCard key={idx} item={item} isLast={idx === currentReviews.center.length - 1} />
+              <TestimonialCard 
+                key={idx} 
+                item={item} 
+                isLast={idx === currentReviews.center.length - 1} 
+                className="reveal-scale"
+                style={{ transitionDelay: `${600 + idx * 150}ms` }}
+              />
             ))}
 
             {/* Featured Image/Video Testimonial Card */}
-            <div className="bg-white border border-gray-border/60 rounded-3xl p-5 shadow-sm flex flex-col justify-start gap-3 group flex-grow">
+            <div 
+              style={{ transitionDelay: '0ms' }}
+              className="bg-white border border-gray-border/60 rounded-3xl p-5 shadow-sm flex flex-col justify-start gap-3 group flex-grow reveal-scale"
+            >
               
               {/* Portrait Image Only (stretches to fill space) */}
               <div className="relative w-full flex-grow min-h-[260px] lg:min-h-[280px] max-h-[300px] rounded-2xl overflow-hidden border border-gray-border/40 shadow-inner">
@@ -794,7 +841,13 @@ function TestimonialsSection() {
           {/* Right Column */}
           <div className="lg:col-span-4 flex flex-col gap-6 min-h-full">
             {currentReviews.right.map((item, idx) => (
-              <TestimonialCard key={idx} item={item} isLast={idx === currentReviews.right.length - 1} />
+              <TestimonialCard 
+                key={idx} 
+                item={item} 
+                isLast={idx === currentReviews.right.length - 1} 
+                className="reveal-scale"
+                style={{ transitionDelay: `${750 + idx * 150}ms` }}
+              />
             ))}
           </div>
 
@@ -829,7 +882,7 @@ function TestimonialsSection() {
 function LetsTalkSection() {
   return (
     <section id="lets-talk" className="pt-6 pb-12 md:pt-8 md:pb-16 bg-white select-none">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
         
         {/* Jet-Black Call-to-Action Card */}
         <div className="relative bg-black rounded-[36px] p-8 py-16 md:py-20 md:px-12 text-center overflow-hidden shadow-xl border border-white/5 group">
@@ -853,12 +906,12 @@ function LetsTalkSection() {
 
           {/* Centered Pill Button */}
           <div className="relative z-10 flex justify-center">
-            <a
-              href="#contact"
+            <Link
+              to="/lets-talk"
               className="inline-flex items-center font-sans font-bold text-sm bg-neutral-200 text-neutral-900 px-10 py-4 rounded-2xl hover:bg-gradient-to-r hover:from-brand-teal hover:to-brand-green hover:text-white hover:scale-105 active:scale-95 transition-all duration-300 shadow-md select-none"
             >
               Let's Talk
-            </a>
+            </Link>
           </div>
 
         </div>

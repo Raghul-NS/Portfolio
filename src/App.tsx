@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import ScrollToTop from './components/ScrollToTop';
+import TransitionLayout from './components/TransitionLayout';
 import Home from './Pages/Home';
 import About from './Pages/About';
 import Works from './Pages/Works';
@@ -9,14 +9,15 @@ import LetsTalk from "./Pages/Let'sTalk";
 function App() {
   return (
     <Router>
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/works" element={<Works />} />
-        <Route path="/tech-stack" element={<TechStack />} />
-        <Route path="/lets-talk" element={<LetsTalk />} />
-      </Routes>
+      <TransitionLayout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/works" element={<Works />} />
+          <Route path="/tech-stack" element={<TechStack />} />
+          <Route path="/lets-talk" element={<LetsTalk />} />
+        </Routes>
+      </TransitionLayout>
     </Router>
   );
 }

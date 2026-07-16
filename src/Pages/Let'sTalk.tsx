@@ -51,7 +51,7 @@ export default function LetsTalk() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
               
               {/* Left Column: Greeting & Intro */}
-              <div className="lg:col-span-7 text-left space-y-6">
+              <div className="lg:col-span-7 text-left space-y-6 reveal-left">
                 <h1 className="font-sans font-black text-4xl sm:text-5xl lg:text-6xl text-neutral-850 tracking-tight leading-[1.1]">
                   Hi all, I'm Raghul N.S
                 </h1>
@@ -96,7 +96,7 @@ export default function LetsTalk() {
               </div>
 
               {/* Right Column: Premium Developer Robot Mascot Illustration (Sleek vector drawing with animations) */}
-              <div className="lg:col-span-5 flex items-center justify-center relative min-h-[340px] sm:min-h-[380px] md:min-h-[420px] overflow-visible">
+              <div className="lg:col-span-5 flex items-center justify-center relative min-h-[340px] sm:min-h-[380px] md:min-h-[420px] overflow-visible reveal-scale">
                 {/* CSS animation definitions */}
                 <style>{`
                   @keyframes float-robot {
@@ -277,7 +277,7 @@ export default function LetsTalk() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
               
               {/* Left Column: Form Details (takes 7 columns) */}
-              <form onSubmit={handleSubmit} className="lg:col-span-7 text-left space-y-12">
+              <form onSubmit={handleSubmit} className="lg:col-span-7 text-left space-y-12 reveal-left delay-100">
                 
                 {/* Field 01: Name */}
                 <div className="border-b border-neutral-200 focus-within:border-brand-teal/80 transition-colors pb-6 flex flex-col md:flex-row md:items-baseline gap-6">
@@ -390,7 +390,7 @@ export default function LetsTalk() {
               </form>
 
               {/* Right Column: Contact Details Sidebar (takes 5 columns) */}
-              <div className="lg:col-span-5 text-left space-y-12 lg:pl-30">
+              <div className="lg:col-span-5 text-left space-y-12 lg:pl-30 reveal-right delay-150">
                 
                 {/* 1. Contact Details */}
                 <div className="space-y-3">

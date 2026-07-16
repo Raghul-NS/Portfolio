@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { ExternalLink, Heart, ChevronRight, X } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -19,6 +20,41 @@ export default function Works() {
   const [blurRadius, setBlurRadius] = useState(12);
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const [showAll, setShowAll] = useState(false);
+  const [revealedProjects, setRevealedProjects] = useState<boolean[]>([]);
+
+  // Observe project cards scroll reveal
+  useEffect(() => {
+    setRevealedProjects(new Array(projects.length).fill(false));
+
+    const observers: IntersectionObserver[] = [];
+    const timer = setTimeout(() => {
+      const cards = document.querySelectorAll('.project-step-card');
+      cards.forEach((card, idx) => {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setRevealedProjects((prev) => {
+                  const next = [...prev];
+                  next[idx] = true;
+                  return next;
+                });
+                observer.disconnect();
+              }
+            });
+          },
+          { threshold: 0.05, rootMargin: '0px 0px -35px 0px' }
+        );
+        observer.observe(card);
+        observers.push(observer);
+      });
+    }, 950);
+
+    return () => {
+      clearTimeout(timer);
+      observers.forEach((obs) => obs.disconnect());
+    };
+  }, [showAll]);
 
   const projects = [
     {
@@ -98,7 +134,7 @@ export default function Works() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
               
               {/* Left Column: Heading and description */}
-              <div className="lg:col-span-6 space-y-6 text-left lg:pl-12">
+              <div className="lg:col-span-6 space-y-6 text-left lg:pl-12 reveal-left">
                 <h1 className="font-sans font-black text-6xl sm:text-7xl text-neutral-800 tracking-tighter leading-[0.9]">
                   works.
                 </h1>
@@ -113,7 +149,7 @@ export default function Works() {
               </div>
 
               {/* Right Column: Interactive control panel mockup (matching reference image 2 exactly) */}
-              <div className="lg:col-span-6 flex justify-center lg:justify-start lg:pl-10 relative select-none mt-10 lg:mt-0">
+              <div className="lg:col-span-6 flex justify-center lg:justify-start lg:pl-10 relative select-none mt-10 lg:mt-0 reveal-right">
                 <div className="w-full max-w-[420px] flex flex-col gap-6">
                   
                   {/* Checkbox selector centered */}
@@ -227,8 +263,13 @@ export default function Works() {
                   <div 
                     key={idx}
                     onClick={() => setSelectedProject(project)}
-                    style={shadowStyle}
-                    className="bg-white border border-neutral-200/60 rounded-[1.8rem] overflow-hidden hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between h-full group text-left cursor-pointer shadow-sm hover:shadow-md"
+                    style={{ 
+                      ...shadowStyle, 
+                      transitionDelay: `${(idx % 3) * 80}ms` 
+                    }}
+                    className={`bg-white border border-neutral-200/60 rounded-[1.8rem] overflow-hidden hover:-translate-y-1.5 flex flex-col justify-between h-full group text-left cursor-pointer shadow-sm hover:shadow-md project-step-card reveal-scale ${
+                      revealedProjects[idx] ? 'visible transition-all duration-300' : ''
+                    }`}
                   >
                     <div>
                       {/* Project Image Box (centered inside a padded light gray container to match reference image 2) */}
@@ -276,7 +317,7 @@ export default function Works() {
 
         {/* Let's Talk Section (Signature Jet-Black card routing to contact page) */}
         <section id="lets-talk" className="pt-2 pb-16 md:pt-4 md:pb-20 bg-white select-none">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
             
             {/* Jet-Black Card */}
             <div className="relative bg-black rounded-[36px] p-8 py-16 md:py-20 md:px-12 text-center overflow-hidden shadow-xl border border-white/5 group">
@@ -317,7 +358,7 @@ export default function Works() {
       <Footer />
 
       {/* Selected Project Details Modal Dialog */}
-      {selectedProject && (
+      {selectedProject && createPortal(
         <div 
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-all duration-300 animate-fade-in"
           onClick={() => setSelectedProject(null)}
@@ -423,7 +464,8 @@ export default function Works() {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
