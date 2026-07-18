@@ -170,7 +170,7 @@ function HeroSection() {
 
                   {/* GitHub */}
                   <a
-                    href="https://github.com"
+                    href="https://github.com/Raghul799"
                     target="_blank"
                     rel="noreferrer"
                     className="w-12 h-12 rounded-full border border-gray-border flex items-center justify-center hover:scale-105 active:scale-95 shadow-sm hover:shadow-md transition-all duration-300 bg-white hover:bg-[#181717] text-[#181717] hover:text-white overflow-hidden group"

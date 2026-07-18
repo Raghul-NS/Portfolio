@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   FaGithub, 
   FaLinkedin, 
@@ -20,24 +21,52 @@ export default function LetsTalk() {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) {
       alert('Please fill in all required fields marked with *');
       return;
     }
-    // Simulate API request
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ name: '', email: '', org: '', services: '', message: '' });
-    }, 3000);
+
+    setIsLoading(true);
+    setErrorMessage('');
+    
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+      const response = await fetch(`${backendUrl}/api/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+      if (response.ok && result.status === 'success') {
+        setIsSubmitted(true);
+        setShowSuccessModal(true);
+        setFormData({ name: '', email: '', org: '', services: '', message: '' });
+        setTimeout(() => {
+          setIsSubmitted(false);
+        }, 5000);
+      } else {
+        setErrorMessage(result.message || 'Failed to send message. Please try again.');
+      }
+    } catch (err) {
+      console.error('Submit error:', err);
+      setErrorMessage('Could not connect to backend server. Make sure the server is running.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -63,7 +92,7 @@ export default function LetsTalk() {
                 {/* Social Icons row */}
                 <div className="flex flex-wrap items-center gap-3.5 pt-2">
                   <a 
-                    href="https://github.com/Raghul-NS" 
+                    href="https://github.com/Raghul799" 
                     target="_blank" 
                     rel="noreferrer"
                     className="w-10 h-10 rounded-full bg-[#181717] hover:bg-[#181717]/90 text-white flex items-center justify-center shadow-sm hover:scale-105 active:scale-95 transition-all duration-200"
@@ -373,16 +402,24 @@ export default function LetsTalk() {
                 </div>
 
                 {/* Action Submit Button */}
-                <div className="pt-4 flex items-center gap-4">
+                <div className="pt-4 flex flex-wrap items-center gap-4">
                   <button 
                     type="submit"
-                    className="inline-flex items-center justify-center font-sans font-bold text-sm bg-neutral-900 text-white px-10 py-4 rounded-2xl hover:bg-brand-teal hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(20,184,166,0.25)] active:scale-95 transition-all duration-300 select-none"
+                    disabled={isLoading}
+                    className={`inline-flex items-center justify-center font-sans font-bold text-sm bg-neutral-900 text-white px-10 py-4 rounded-2xl transition-all duration-300 select-none ${
+                      isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-brand-teal hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(20,184,166,0.25)] active:scale-95'
+                    }`}
                   >
-                    {isSubmitted ? 'Message Sent!' : 'Send Message'}
+                    {isLoading ? 'Sending...' : isSubmitted ? 'Message Sent!' : 'Send Message'}
                   </button>
                   {isSubmitted && (
                     <span className="font-sans font-semibold text-xs text-brand-teal animate-pulse">
                       Thank you! I will get back to you shortly.
+                    </span>
+                  )}
+                  {errorMessage && (
+                    <span className="font-sans font-semibold text-xs text-red-500">
+                      {errorMessage}
                     </span>
                   )}
                 </div>
@@ -443,7 +480,7 @@ export default function LetsTalk() {
                       <FaLinkedin className="w-5 h-5" />
                     </a>
                     <a 
-                      href="https://github.com/Raghul-NS" 
+                      href="https://github.com/Raghul799" 
                       target="_blank" 
                       rel="noreferrer"
                       className="w-11 h-11 bg-[#181717] rounded-xl hover:bg-[#181717]/90 text-white flex items-center justify-center shadow-sm hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
@@ -470,13 +507,49 @@ export default function LetsTalk() {
                 </div>
 
               </div>
-
             </div>
           </div>
         </section>
       </div>
 
       <Footer />
+
+      {/* Success Dialog Modal */}
+      {showSuccessModal && createPortal(
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-all duration-300 animate-fade-in"
+          onClick={() => setShowSuccessModal(false)}
+        >
+          <div 
+            className="bg-white rounded-[2rem] max-w-md w-full p-8 text-center shadow-2xl border border-neutral-100 relative scale-100 transition-transform duration-300 animate-scale-in flex flex-col items-center justify-center space-y-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Animated Bouncy Checkmark Circle */}
+            <div className="w-16 h-16 rounded-full bg-brand-teal/10 flex items-center justify-center text-brand-teal border border-brand-teal/20 shadow-sm animate-bounce">
+              <svg className="w-8 h-8 stroke-current" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+            
+            <div className="space-y-2">
+              <h3 className="font-sans font-black text-2xl text-neutral-850">
+                Message Sent!
+              </h3>
+              <p className="font-sans text-neutral-500 text-sm leading-relaxed">
+                Thank you for reaching out! Your message has been successfully sent. I will get back to you shortly.
+              </p>
+            </div>
+
+            <button 
+              onClick={() => setShowSuccessModal(false)}
+              className="w-full font-sans font-bold text-sm bg-neutral-900 text-white py-3.5 rounded-xl hover:bg-brand-teal active:scale-95 transition-all duration-200 select-none shadow-md hover:shadow-lg"
+            >
+              Awesome
+            </button>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }

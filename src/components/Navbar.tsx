@@ -36,7 +36,7 @@ export default function Navbar() {
               className="flex items-center gap-2"
             >
               <img 
-                src="/Logo.png" 
+                src="/logo.png" 
                 alt="NSR Logo" 
                 className="h-10 w-auto object-contain hover:opacity-90 transition-opacity" 
               />
