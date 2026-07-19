@@ -18,6 +18,7 @@ app.post('/api/contact', async (req, res) => {
   try {
     const { name, email, org, services, message } = req.body;
     
+    // 1. Submit to Google Sheets first
     const scriptUrl = process.env.GOOGLE_SHEETS_SCRIPT_URL;
     if (!scriptUrl || scriptUrl === 'your_google_sheets_web_app_url_here') {
       console.error('GOOGLE_SHEETS_SCRIPT_URL is not configured in .env');
@@ -27,8 +28,7 @@ app.post('/api/contact', async (req, res) => {
       });
     }
 
-    // Format the payload for Google Sheet columns: S.No, Name, Email, Organization, Service, Message, Status
-    const payload = {
+    const sheetPayload = {
       name: name || "",
       email: email || "",
       org: org || "",
@@ -36,27 +36,116 @@ app.post('/api/contact', async (req, res) => {
       message: message || ""
     };
 
-    // Forward the POST request to Google Apps Script Web App
-    const response = await axios.post(scriptUrl, payload, {
+    const sheetResponse = await axios.post(scriptUrl, sheetPayload, {
       headers: {
         'Content-Type': 'application/json'
       }
     });
 
-    if (response.data && response.data.status === 'success') {
-      return res.status(200).json({ status: 'success', message: 'Row added successfully' });
-    } else {
-      console.error('Google Apps Script failed:', response.data);
+    if (!sheetResponse.data || sheetResponse.data.status !== 'success') {
+      console.error('Google Apps Script failed:', sheetResponse.data);
       return res.status(400).json({ 
         status: 'error', 
-        message: response.data ? response.data.message : 'Apps Script returned an empty response' 
+        message: sheetResponse.data ? sheetResponse.data.message : 'Apps Script returned an empty response' 
       });
     }
+
+    // 2. Trigger EmailJS if configured
+    const serviceId = process.env.EMAILJS_SERVICE_ID;
+    const publicKey = process.env.EMAILJS_PUBLIC_KEY;
+    const privateKey = process.env.EMAILJS_PRIVATE_KEY;
+    const contactTemplateId = process.env.EMAILJS_CONTACT_TEMPLATE_ID;
+
+    if (serviceId && publicKey && privateKey && contactTemplateId) {
+      try {
+        const emailjsPayload = {
+          service_id: serviceId,
+          template_id: contactTemplateId,
+          user_id: publicKey,
+          accessToken: privateKey,
+          template_params: {
+            to_name: "Raghul N.S", // Receiver's name
+            from_name: name || "Anonymous Client",
+            from_email: email || "",
+            from_org: org || "N/A",
+            from_services: services || "N/A",
+            message: message || ""
+          }
+        };
+
+        await axios.post('https://api.emailjs.com/api/v1.0/email/send', emailjsPayload, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('EmailJS contact notification sent successfully.');
+      } catch (emailError) {
+        console.error('EmailJS contact notification failed:', emailError.response ? emailError.response.data : emailError.message);
+        // We do not fail the request since Google Sheets submission was successful.
+      }
+    } else {
+      console.warn('EmailJS keys are missing from .env, skipping contact email notification.');
+    }
+
+    return res.status(200).json({ status: 'success', message: 'Row added and notification sent' });
+
   } catch (error) {
-    console.error('Backend forwarding error:', error.message);
+    console.error('Backend contact submission error:', error.message);
+    const detail = error.response && error.response.data ? ': ' + error.response.data : '';
     return res.status(500).json({ 
       status: 'error', 
-      message: 'Failed to connect to Google Sheets. Check your script URL and connection.' 
+      message: 'Server error processing contact submission' + detail
+    });
+  }
+});
+
+// API route to handle newsletter subscriptions
+app.post('/api/subscribe', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ status: 'error', message: 'Email address is required.' });
+    }
+
+    const serviceId = process.env.EMAILJS_SERVICE_ID;
+    const publicKey = process.env.EMAILJS_PUBLIC_KEY;
+    const privateKey = process.env.EMAILJS_PRIVATE_KEY;
+    const newsletterTemplateId = process.env.EMAILJS_NEWSLETTER_TEMPLATE_ID;
+
+    if (!serviceId || !publicKey || !privateKey || !newsletterTemplateId) {
+      console.error('EmailJS configurations are missing in .env');
+      return res.status(500).json({ 
+        status: 'error', 
+        message: 'Server is not fully configured for subscriptions. Please set the EmailJS keys in your .env file.' 
+      });
+    }
+
+    const emailjsPayload = {
+      service_id: serviceId,
+      template_id: newsletterTemplateId,
+      user_id: publicKey,
+      accessToken: privateKey,
+      template_params: {
+        to_name: "Raghul N.S", // Receiver's name
+        subscriber_email: email
+      }
+    };
+
+    await axios.post('https://api.emailjs.com/api/v1.0/email/send', emailjsPayload, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    console.log(`Newsletter subscription notification sent for: ${email}`);
+    return res.status(200).json({ status: 'success', message: 'Subscribed successfully' });
+
+  } catch (error) {
+    console.error('Newsletter subscription error:', error.response ? error.response.data : error.message);
+    const detail = error.response && error.response.data ? ': ' + error.response.data : '';
+    return res.status(500).json({ 
+      status: 'error', 
+      message: 'Failed to complete subscription' + detail
     });
   }
 });

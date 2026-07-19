@@ -1,6 +1,48 @@
+import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 
 export default function Footer() {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [statusMsg, setStatusMsg] = useState('');
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setStatus('loading');
+    setStatusMsg('');
+
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+      const response = await fetch(`${backendUrl}/api/subscribe`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const result = await response.json();
+      if (response.ok && result.status === 'success') {
+        setStatus('success');
+        setStatusMsg('Successfully subscribed!');
+        setEmail('');
+        setTimeout(() => {
+          setStatus('idle');
+          setStatusMsg('');
+        }, 5000);
+      } else {
+        setStatus('error');
+        setStatusMsg(result.message || 'Subscription failed. Try again.');
+      }
+    } catch (err) {
+      console.error('Subscription error:', err);
+      setStatus('error');
+      setStatusMsg('Could not connect to subscription server.');
+    }
+  };
+
   return (
     <footer className="bg-white border-t border-gray-border/60 pt-16 pb-8 md:pt-20 md:pb-10 font-sans text-left">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,22 +57,39 @@ export default function Footer() {
             </h3>
             
             {/* Custom Input Field with Arrow Button */}
-            <form className="max-w-md" onSubmit={(e) => e.preventDefault()}>
+            <form className="max-w-md" onSubmit={handleSubscribe}>
               <div className="relative flex items-center border-b-2 border-brand-navy/30 focus-within:border-brand-teal transition-colors py-3">
                 <input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email address"
                   className="w-full bg-transparent border-none text-brand-navy placeholder-gray-400 font-sans font-semibold text-sm outline-none pr-10"
                   required
+                  disabled={status === 'loading'}
                 />
                 <button
                   type="submit"
-                  className="absolute right-0 p-1.5 rounded-full hover:bg-gray-100 text-brand-navy hover:text-brand-teal transition-all active:scale-90"
+                  disabled={status === 'loading'}
+                  className={`absolute right-0 p-1.5 rounded-full hover:bg-gray-100 text-brand-navy hover:text-brand-teal transition-all active:scale-90 ${
+                    status === 'loading' ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                   aria-label="Subscribe"
                 >
                   <ArrowRight className="w-5 h-5" />
                 </button>
               </div>
+
+              {/* Status Message Labels */}
+              {statusMsg && (
+                <div className="mt-3">
+                  <span className={`font-sans font-semibold text-xs transition-opacity duration-300 ${
+                    status === 'success' ? 'text-brand-teal animate-pulse' : 'text-red-500'
+                  }`}>
+                    {statusMsg}
+                  </span>
+                </div>
+              )}
             </form>
           </div>
 
