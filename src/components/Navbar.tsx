@@ -41,7 +41,7 @@ export default function Navbar() {
                 className="h-10 w-auto object-contain hover:opacity-90 transition-opacity" 
               />
               <span className="font-sans font-bold text-xl text-brand-navy tracking-tight hidden sm:block">
-                Raghul N.S
+                Raghul N.S.
               </span>
             </Link>
           </div>
