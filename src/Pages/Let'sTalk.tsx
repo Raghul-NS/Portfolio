@@ -41,7 +41,7 @@ export default function LetsTalk() {
     setErrorMessage('');
     
     try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
       const response = await fetch(`${backendUrl}/api/contact`, {
         method: 'POST',
         headers: {
