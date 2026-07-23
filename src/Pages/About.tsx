@@ -194,7 +194,7 @@ export default function About() {
       location: 'Namakkal, India',
       durationLabel: 'Job Duration:',
       durationYears: '2025 - PRESENT',
-      desc: 'Engineered EaseMilker platform interfaces with real-time controls. Architected and implemented structured modules for a scalable ERP and CRM application, and packaged React web applications into cross-platform desktop executables (.exe) using Electron.js with offline features.'
+      desc: 'Engineered EaseMilker platform interfaces with real-time controls. Architected and implemented structured modules for a scalable ERP application, and packaged React web applications into cross-platform desktop executables (.exe) using Electron.js with offline features.'
     },
     {
       role: 'Electrical & Electronics Engineering Student',
@@ -221,12 +221,12 @@ export default function About() {
       desc: 'Designed and developed a scalable e-commerce web application with secure authentication, cart transactions, and dynamic product catalogs. Optimized responsive interfaces and deployed on Vercel for high availability.'
     },
     {
-      role: 'Full-Stack Developer - ERP & CRM',
+      role: 'Full-Stack Developer - ERP',
       company: 'Azhizen Solutions',
       location: 'Namakkal, India',
       durationLabel: 'Project Duration:',
       durationYears: '2024 - 2025',
-      desc: 'Architected and built full-stack modules for business data management and customer relations. Transformed the system into a cross-platform desktop application (.exe) using Electron.js with offline capability.'
+      desc: 'Architected and built full-stack modules for business data management. Transformed the system into a cross-platform desktop application (.exe) using Electron.js with offline capability.'
     },
     {
       role: 'NCC Cadet',

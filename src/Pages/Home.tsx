@@ -383,17 +383,17 @@ function WorksSection() {
           {/* Row 1: Two Large Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            {/* Card Left - Azhizen ERP & CRM System */}
+            {/* Card Left - Azhizen ERP System */}
             <div className="bg-gray-50 border border-gray-100 rounded-3xl p-4 md:p-5 flex flex-col justify-between hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(20,184,166,0.12)] hover:border-brand-teal/30 hover:bg-white transition-all duration-300 ease-out group reveal-left delay-75">
               <div>
                 <h3 className="font-sans font-black text-xl text-brand-navy leading-tight">
-                  Azhizen ERP & CRM System
+                  Azhizen ERP System
                 </h3>
               </div>
               <div className="mt-4 rounded-2xl overflow-hidden shadow-sm border border-gray-border/40 bg-white aspect-[16/9]">
                 <img 
                   src={dashboardMockup} 
-                  alt="Azhizen ERP & CRM Project Preview" 
+                  alt="Azhizen ERP Project Preview" 
                   className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" 
                 />
               </div>

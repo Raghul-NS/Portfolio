@@ -66,8 +66,8 @@ export default function Works() {
       liveUrl: 'https://project-iuh4.vercel.app/'
     },
     {
-      title: 'Azhizen ERP & CRM Software',
-      desc: 'An enterprise planning and relationship manager. Features database logging and real-time processing modules, packaged as a cross-platform Electron.js desktop application.',
+      title: 'Azhizen ERP Software',
+      desc: 'An enterprise planning and data management system. Features database logging and real-time processing modules, packaged as a cross-platform Electron.js desktop application.',
       tech: ['React.js', 'Tailwind CSS', 'Supabase', 'Electron.js'],
       category: 'Enterprise App',
       image: erpImg,
